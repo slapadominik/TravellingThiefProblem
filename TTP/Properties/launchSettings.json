@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TTP": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\ttpData\\easy_0.ttp\"  \"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\logs\""
+    }
+  }
+}
