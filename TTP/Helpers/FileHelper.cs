@@ -66,13 +66,25 @@ namespace TTP
             return data;
         }
 
-        public void WriteToCsv<T>(IEnumerable<T> records, string path)
+        public void WriteToCsv(TTPData initData, IEnumerable<TSPPopulationStatistics> statistics, Knapsack knapsack, string path)
         {
             using (var writer = new StreamWriter(path))
             using (var csv = new CsvWriter(writer))
             {
                 csv.Configuration.RegisterClassMap<TSPStatisticsCsvModelMapper>();
-                csv.WriteRecords(records);
+                csv.Configuration.RegisterClassMap<TTPResultCsvModelMapper>();
+                csv.Configuration.RegisterClassMap<KnapsackCsvModelMapper>();
+                csv.WriteHeader<TTPData>();
+                csv.NextRecord();
+                csv.WriteRecord(initData);
+                csv.NextRecord();
+                csv.WriteHeader<Knapsack>();
+                csv.NextRecord();
+                csv.WriteRecord(knapsack);
+                csv.NextRecord();
+                csv.WriteHeader<TSPPopulationStatistics>();
+                csv.NextRecord();
+                csv.WriteRecords(statistics);
             }
         }
     }

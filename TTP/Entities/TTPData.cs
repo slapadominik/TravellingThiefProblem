@@ -12,6 +12,11 @@ namespace TTP.Entities
         public double MinSpeed { get; set; }
         public double MaxSpeed { get; set; }
         public double RentingRatio { get; set; }
+        public int PopulationSize { get; set; }
+        public int GenerationNumber { get; set; }
+        public float CrossProbability { get; set; }
+        public float MutationProbability { get; set; }
+        public int IndividualsPerTournament { get; set; }
         public List<City> Cities { get; set; }
         public List<Item> Items { get; set; }
 

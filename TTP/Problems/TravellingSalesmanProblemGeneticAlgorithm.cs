@@ -24,11 +24,11 @@ namespace TTP
             return new TSPIndividual(cities.Shuffle(), INIT_POPULATION_NUMBER);
         }
 
-        public double CalculateQuality(double maxSpeed, double minSpeed, TSPIndividual individual, Knapsack knapsack)
+        public double Fitness(double maxSpeed, double minSpeed, TSPIndividual individual, Knapsack knapsack)
         {
             var speeds = CalculateSpeeds(maxSpeed, minSpeed, individual, knapsack);
             var routeTime = CalculateRouteTime(individual, speeds);
-            return knapsack.GetProfit() - routeTime;
+            return knapsack.Profit - routeTime;
         }
 
         public void Mutation(TSPIndividual tspEntity)
@@ -54,11 +54,11 @@ namespace TTP
             return child;
         }
 
-        public List<TSPIndividual> Selection(List<TSPIndividual> population)
+        public List<TSPIndividual> Selection(List<TSPIndividual> population, int individualsPerTournament)
         {
             List<TSPIndividual> individuals = new List<TSPIndividual>();
 
-            var tournamentGroups = population.SplitList(population.Count / 10);
+            var tournamentGroups = population.SplitList(individualsPerTournament);
             foreach (var tournamentGroup in tournamentGroups)
             {
                 individuals.Add(RunTournament(tournamentGroup));
@@ -67,29 +67,26 @@ namespace TTP
             return individuals;
         }
 
-        public (TSPIndividual bestIndividual, IEnumerable<TSPPopulationStatistics> statistics) ResolveProblem(TTPData initData, Knapsack knapsack, int initPopulationSize, int generationLimit)
+        public (TSPIndividual bestIndividual, IEnumerable<TSPPopulationStatistics> statistics) ResolveProblem(TTPData initData, Knapsack knapsack)
         {
             var tspStatistics = new List<TSPPopulationStatistics>();
             var population = new List<TSPIndividual>();
 
-            for (int i = 0; i < initPopulationSize; i++)
+            for (int i = 0; i < initData.PopulationSize; i++)
             {
                 population.Add(Initialize(initData.Cities));
-            }
-
-            foreach (var individual in population)
-            {
-                individual.Quality = CalculateQuality(initData.MaxSpeed, initData.MinSpeed, individual, knapsack);
+                population[i].Quality = Fitness(initData.MaxSpeed, initData.MinSpeed, population[i], knapsack);
             }
 
             var qualityDesc = population.OrderByDescending(x => x.Quality);
             tspStatistics.Add(new TSPPopulationStatistics{ PopulationNumber = qualityDesc.First().PopulationNumber, AverageQuality = population.Average(x => x.Quality), BestQuality = qualityDesc.First().Quality, WorstQuality = qualityDesc.Last().Quality});
 
-            for (int i = 0; i < generationLimit-1; i++)
+            for (int i = 0; i < initData.GenerationNumber-1; i++)
             {
                 var nextGeneration = new List<TSPIndividual>();
-                var selectedIndividuals = Selection(population);
-                while (nextGeneration.Count!=initPopulationSize)
+
+                var selectedIndividuals = Selection(population, initData.IndividualsPerTournament);
+                while (nextGeneration.Count!=initData.PopulationSize)
                 {
                     nextGeneration.Add(
                         Crossover(selectedIndividuals[_randomGenerator.Next(selectedIndividuals.Count)], 
@@ -99,12 +96,11 @@ namespace TTP
 
                 foreach (var individual in nextGeneration)
                 {
-                    Mutation(individual);
-                }
-
-                foreach (var individual in nextGeneration)
-                {
-                    individual.Quality = CalculateQuality(initData.MaxSpeed, initData.MinSpeed, individual, knapsack);
+                    if (initData.MutationProbability <= _randomGenerator.NextDouble())
+                    {
+                        Mutation(individual);
+                    }
+                    individual.Quality = Fitness(initData.MaxSpeed, initData.MinSpeed, individual, knapsack);
                 }
 
                 population = nextGeneration;

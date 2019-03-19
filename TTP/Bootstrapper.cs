@@ -32,6 +32,11 @@ namespace TTP
 
             var csvOutputPath = $"{args[CsvOutputFilePathArgument]}\\{Path.GetFileNameWithoutExtension(args[TtpInputFilePathArgument])}.csv";
             var ttpData = _dataLoader.LoadFromFile(args[TtpInputFilePathArgument]);
+            ttpData.GenerationNumber = 100;
+            ttpData.PopulationSize = 100;
+            ttpData.IndividualsPerTournament = 10;
+            ttpData.MutationProbability = 0.6f;
+            ttpData.CrossProbability = 0.5f;
             return (ttpData, csvOutputPath);
         }
     }

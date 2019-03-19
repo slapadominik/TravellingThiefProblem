@@ -5,8 +5,6 @@ namespace TTP
 {
     class Program
     {
-        private const int POPULATION_SIZE = 150;
-        private const int GENERATION_LIMIT = 100;
         private static IFileHelper fileHelper;
         private static IBootstrapper bootstrapper;
         private static IKnapsackProblem knapsackProblem;
@@ -22,9 +20,9 @@ namespace TTP
 
                 var knapsack = knapsackProblem.GetMaximumProfit(ttpData.KnapsackCapacity, ttpData.Items);
                 var (bestIndividual, statistics) =
-                    tsp.ResolveProblem(ttpData, knapsack, POPULATION_SIZE, GENERATION_LIMIT);
+                    tsp.ResolveProblem(ttpData, knapsack);
 
-                fileHelper.WriteToCsv(statistics, outputPath);
+                fileHelper.WriteToCsv(ttpData, statistics, knapsack, outputPath);
                 Console.WriteLine("Ended processing TravellingSalesmanProblem.");
                 Console.ReadLine();
             }

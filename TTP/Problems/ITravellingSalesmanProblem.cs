@@ -6,10 +6,10 @@ namespace TTP
     public interface ITravellingSalesmanProblem
     {
         TSPIndividual Initialize(List<City> cities);
-        double CalculateQuality(double maxSpeed, double minSpeed, TSPIndividual individual, Knapsack knapsack);
+        double Fitness(double maxSpeed, double minSpeed, TSPIndividual individual, Knapsack knapsack);
         void Mutation(TSPIndividual tspEntity);
         TSPIndividual Crossover(TSPIndividual child1, TSPIndividual child2);
-        List<TSPIndividual> Selection(List<TSPIndividual> population);
-        (TSPIndividual bestIndividual, IEnumerable<TSPPopulationStatistics> statistics) ResolveProblem(TTPData initData, Knapsack knapsack, int initPopulationSize, int generationLimit);
+        List<TSPIndividual> Selection(List<TSPIndividual> population, int individualsPerTorunament);
+        (TSPIndividual bestIndividual, IEnumerable<TSPPopulationStatistics> statistics) ResolveProblem(TTPData initData, Knapsack knapsack);
     }
 }

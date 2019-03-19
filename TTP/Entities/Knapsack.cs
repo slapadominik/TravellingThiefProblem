@@ -8,20 +8,20 @@ namespace TTP.Entities
         public IList<Item> Items { get; set; }
         public int Capacity { get; }
 
+        public int Profit
+        {
+            get { return Items.Sum(x => x.Profit); }
+        }
+
+        public int Weight
+        {
+            get { return Items.Sum(x => x.Weight); }
+        }
+
         public Knapsack(int capacity)
         {
             Items = new List<Item>();
             Capacity = capacity;
-        }
-
-        public int GetProfit()
-        {
-            return Items.Sum(x => x.Profit);
-        }
-
-        public int GetWeight()
-        {
-            return Items.Sum(x => x.Weight);
         }
     }
 }
