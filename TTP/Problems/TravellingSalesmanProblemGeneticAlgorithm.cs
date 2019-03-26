@@ -12,7 +12,6 @@ namespace TTP
     public class TravellingSalesmanProblemGeneticAlgorithm : ITravellingSalesmanProblem
     {
         private readonly Random _randomGenerator;
-        private const int INIT_POPULATION_NUMBER = 1;
 
         public TravellingSalesmanProblemGeneticAlgorithm()
         {
@@ -21,7 +20,7 @@ namespace TTP
 
         public TSPIndividual Initialize(List<City> cities)
         {
-            return new TSPIndividual(cities.Shuffle(), INIT_POPULATION_NUMBER);
+            return new TSPIndividual(cities.Shuffle());
         }
 
         public double Fitness(double maxSpeed, double minSpeed, TSPIndividual individual, Knapsack knapsack)
@@ -36,41 +35,50 @@ namespace TTP
             tspEntity.Route.Swap();
         }
 
-        public TSPIndividual Crossover(TSPIndividual parent1, TSPIndividual parent2)
+        public (TSPIndividual child1, TSPIndividual child2) Crossover(TSPIndividual parent1, TSPIndividual parent2)
         {
-            List<City> childRoute = new List<City>();
+            List<City> child1Route = new List<City>();
+            List<City> child2Route = new List<City>();
             if (parent1.Route.Count != parent2.Route.Count)
             {
                 throw new InvalidOperationException($"Crossover is not possible for child1 {parent1.Route.Count}, child2 {parent2.Route.Count}");
             }
 
             var splitPoint = _randomGenerator.Next(0, parent1.Route.Count);
-            childRoute.AddRange(parent1.Route.GetRange(0, splitPoint).ToList());
-            childRoute.AddRange(parent2.Route.GetRange(splitPoint, parent2.Route.Count-splitPoint));
+            child1Route.AddRange(parent1.Route.GetRange(0, splitPoint).ToList());
+            child1Route.AddRange(parent2.Route.GetRange(splitPoint, parent2.Route.Count-splitPoint));
+            TSPIndividual child1 = new TSPIndividual(child1Route);
+            child1.RepairRoute(parent1, parent2);
 
-            TSPIndividual child = new TSPIndividual(childRoute, parent1.PopulationNumber+1);
-            child.RepairRoute(parent1, parent2);
+            var splitPoint2 = _randomGenerator.Next(0, parent1.Route.Count);
+            child2Route.AddRange(parent1.Route.GetRange(0, splitPoint2).ToList());
+            child2Route.AddRange(parent2.Route.GetRange(splitPoint2, parent2.Route.Count - splitPoint2));
+            TSPIndividual child2 = new TSPIndividual(child2Route);
+            child2.RepairRoute(parent1, parent2);
 
-            return child;
+            return (child1, child2);
         }
 
-        public List<TSPIndividual> Selection(List<TSPIndividual> population, int individualsPerTournament)
+        public TSPIndividual SelectionTournament(List<TSPIndividual> population, int individualsPerTournament)
         {
-            List<TSPIndividual> individuals = new List<TSPIndividual>();
-
-            var tournamentGroups = population.SplitList(individualsPerTournament);
-            foreach (var tournamentGroup in tournamentGroups)
+            TSPIndividual best = null;
+            for (int i = 0; i < individualsPerTournament; i++)
             {
-                individuals.Add(RunTournament(tournamentGroup));
+                var selected = population[_randomGenerator.Next(0, population.Count)];
+                if (best == null || selected.Quality > best.Quality)
+                {
+                    best = selected;
+                }
             }
 
-            return individuals;
+            return best;
         }
 
         public (TSPIndividual bestIndividual, IEnumerable<TSPPopulationStatistics> statistics) ResolveProblem(TTPData initData, Knapsack knapsack)
         {
             var tspStatistics = new List<TSPPopulationStatistics>();
             var population = new List<TSPIndividual>();
+            int populationNumber = 0;
 
             for (int i = 0; i < initData.PopulationSize; i++)
             {
@@ -79,33 +87,42 @@ namespace TTP
             }
 
             var qualityDesc = population.OrderByDescending(x => x.Quality);
-            tspStatistics.Add(new TSPPopulationStatistics{ PopulationNumber = qualityDesc.First().PopulationNumber, AverageQuality = population.Average(x => x.Quality), BestQuality = qualityDesc.First().Quality, WorstQuality = qualityDesc.Last().Quality});
+            tspStatistics.Add(new TSPPopulationStatistics{ PopulationNumber = populationNumber, AverageQuality = population.Average(x => x.Quality), BestQuality = qualityDesc.First().Quality, WorstQuality = qualityDesc.Last().Quality});
 
             for (int i = 0; i < initData.GenerationNumber-1; i++)
             {
-                var nextGeneration = new List<TSPIndividual>();
-                var selectedIndividuals = Selection(population, initData.IndividualsPerTournament);
-                while (nextGeneration.Count!=initData.PopulationSize)
-                {
-                    nextGeneration.Add(
-                        Crossover(selectedIndividuals[_randomGenerator.Next(selectedIndividuals.Count)], 
-                            selectedIndividuals[_randomGenerator.Next(selectedIndividuals.Count)])
-                        );
-                }
+                var childGeneration = new List<TSPIndividual>();
 
-                foreach (var individual in nextGeneration)
+                while (childGeneration.Count<initData.PopulationSize)
                 {
-                    if (initData.MutationProbability <= _randomGenerator.NextDouble())
+                    var parent1 = SelectionTournament(population, initData.IndividualsPerTournament);
+                    var parent2 = SelectionTournament(population, initData.IndividualsPerTournament);
+                    TSPIndividual child1, child2;
+                    if (initData.CrossProbability > _randomGenerator.NextDouble())
                     {
-                        Mutation(individual);
+                        (child1, child2) = Crossover(parent1, parent2);
                     }
-                    individual.Quality = Fitness(initData.MaxSpeed, initData.MinSpeed, individual, knapsack);
+                    else
+                    {
+                        child1 = parent1;
+                        child2 = parent2;
+                    }
+                    if (initData.MutationProbability > _randomGenerator.NextDouble())
+                    {
+                        Mutation(child1);
+                        Mutation(child2);
+                    }
+                    child1.Quality = Fitness(initData.MaxSpeed, initData.MinSpeed, child1, knapsack);
+                    child2.Quality = Fitness(initData.MaxSpeed, initData.MinSpeed, child2, knapsack);
+                    childGeneration.Add(child1);
+                    childGeneration.Add(child2);
                 }
-
-                population = nextGeneration;
+                population = childGeneration;
+                populationNumber++;
                 var averageQuality = population.Average(x => x.Quality);
                 var populationOrderedByQualityDesc = population.OrderByDescending(x => x.Quality);                
-                tspStatistics.Add(new TSPPopulationStatistics{PopulationNumber = populationOrderedByQualityDesc.First().PopulationNumber, BestQuality = populationOrderedByQualityDesc.First().Quality, AverageQuality = averageQuality, WorstQuality = populationOrderedByQualityDesc.Last().Quality});
+                tspStatistics.Add(new TSPPopulationStatistics{PopulationNumber = populationNumber, BestQuality = populationOrderedByQualityDesc.First().Quality, AverageQuality = averageQuality, WorstQuality = populationOrderedByQualityDesc.Last().Quality});
+                Console.WriteLine($"Calculated generation: {populationNumber}");
             }
 
             return (population.OrderByDescending(x => x.Quality).First(), tspStatistics);
@@ -138,16 +155,6 @@ namespace TTP
             }
 
             return speeds;
-        }
-
-        private TSPIndividual RunTournament(List<TSPIndividual> participants)
-        {
-            if (participants == null || !participants.Any())
-            {
-                throw new ArgumentException();
-            }
-
-            return participants.OrderByDescending(x => x.Quality).First();
         }
 
         private double CalculateSpeed(double maxSpeed, double minSpeed, int currentWeight, int knapsackCapacity)

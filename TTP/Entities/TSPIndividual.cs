@@ -8,14 +8,12 @@ namespace TTP.Entities
     public class TSPIndividual
     {
         public List<City> Route { get; private set; }
-        public int PopulationNumber { get; }
         public double Quality { get; set; }
         private readonly IEqualityComparer<City> _cityEqualityComparer;
 
-        public TSPIndividual(List<City> route, int populationNumber)
+        public TSPIndividual(List<City> route)
         {
             Route = route;
-            PopulationNumber = populationNumber;
             _cityEqualityComparer = new CityEqualityComparer();
         }
 
@@ -39,7 +37,7 @@ namespace TTP.Entities
 
         public override string ToString()
         {
-            return $"Population: {PopulationNumber}, Quality: {Quality}";
+            return $"Quality: {Quality}";
         }
     }
 }
