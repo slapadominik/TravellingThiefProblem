@@ -84,7 +84,6 @@ namespace TTP
             for (int i = 0; i < initData.GenerationNumber-1; i++)
             {
                 var nextGeneration = new List<TSPIndividual>();
-
                 var selectedIndividuals = Selection(population, initData.IndividualsPerTournament);
                 while (nextGeneration.Count!=initData.PopulationSize)
                 {

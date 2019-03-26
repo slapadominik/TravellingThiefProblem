@@ -8,20 +8,25 @@ namespace TTP
     {
         private readonly ILoader _dataLoader;
         private const int TtpInputFilePathArgument = 0;
-        private const int CsvOutputFilePathArgument = 1;
+        private const int CsvStatisticOutputFilePathArgument = 1;
+        private const int CsvRouteOutputFilePathArgument = 1;
 
         public Bootstrapper(ILoader dataLoader)
         {
             _dataLoader = dataLoader;
         }
 
-        public (TTPData data, string csvOutputPath) ParseArguments(string[] args)
+        public (TTPData data, string statisticsOutputPath, string routeOutputPath) ParseArguments(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length != 3)
             {
                 throw new ArgumentException($"Wrong arguments count! Scheme: ttp \"inputPath\" \"outputPath\"");
             }
-            if (!Directory.Exists(args[CsvOutputFilePathArgument]))
+            if (!Directory.Exists(args[CsvStatisticOutputFilePathArgument]))
+            {
+                throw new DirectoryNotFoundException();
+            }
+            if (!Directory.Exists(args[CsvRouteOutputFilePathArgument]))
             {
                 throw new DirectoryNotFoundException();
             }
@@ -30,14 +35,15 @@ namespace TTP
                 throw new ArgumentException("Wrong \"inputPath\" argument. Input file should have .ttp extension.");
             }
 
-            var csvOutputPath = $"{args[CsvOutputFilePathArgument]}\\{Path.GetFileNameWithoutExtension(args[TtpInputFilePathArgument])}.csv";
+            var statisticsOutputPath = $"{args[CsvStatisticOutputFilePathArgument]}\\{Path.GetFileNameWithoutExtension(args[TtpInputFilePathArgument])}_statistics.csv";
+            var routeOutputPath = $"{args[CsvStatisticOutputFilePathArgument]}\\{Path.GetFileNameWithoutExtension(args[TtpInputFilePathArgument])}_route.csv";
             var ttpData = _dataLoader.LoadFromFile(args[TtpInputFilePathArgument]);
-            ttpData.GenerationNumber = 100;
-            ttpData.PopulationSize = 100;
-            ttpData.IndividualsPerTournament = 10;
-            ttpData.MutationProbability = 0.6f;
+            ttpData.GenerationNumber = 400;
+            ttpData.PopulationSize = 150;
+            ttpData.IndividualsPerTournament = 5;
+            ttpData.MutationProbability = 0.55f;
             ttpData.CrossProbability = 0.5f;
-            return (ttpData, csvOutputPath);
+            return (ttpData, statisticsOutputPath, routeOutputPath);
         }
     }
 }

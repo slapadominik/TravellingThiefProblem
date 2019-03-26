@@ -66,7 +66,7 @@ namespace TTP
             return data;
         }
 
-        public void WriteToCsv(TTPData initData, IEnumerable<TSPPopulationStatistics> statistics, Knapsack knapsack, string path)
+        public void WriteStatisticsToCsv(TTPData initData, IEnumerable<TSPPopulationStatistics> statistics, Knapsack knapsack, string path)
         {
             using (var writer = new StreamWriter(path))
             using (var csv = new CsvWriter(writer))
@@ -85,6 +85,16 @@ namespace TTP
                 csv.WriteHeader<TSPPopulationStatistics>();
                 csv.NextRecord();
                 csv.WriteRecords(statistics);
+            }
+        }
+
+        public void WriteBestSolutionToCsv(TSPIndividual bestIndividual, string path)
+        {
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer))
+            {
+                csv.Configuration.RegisterClassMap<CityToCsvModelMapper>();
+                csv.WriteRecords(bestIndividual.Route);
             }
         }
     }

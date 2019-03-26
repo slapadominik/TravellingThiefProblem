@@ -9,6 +9,7 @@ namespace TTP
         List<string> ReadFile(string path);
         bool IsFileDataValid(IEnumerable<string> fileData);
         TTPData ParseFileData(List<string> fileData);
-        void WriteToCsv(TTPData initData, IEnumerable<TSPPopulationStatistics> statistics, Knapsack knapsack, string path);
+        void WriteStatisticsToCsv(TTPData initData, IEnumerable<TSPPopulationStatistics> statistics, Knapsack knapsack, string path);
+        void WriteBestSolutionToCsv(TSPIndividual entity, string path);
     }
 }

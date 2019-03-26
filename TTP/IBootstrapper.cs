@@ -5,6 +5,6 @@ namespace TTP
 {
     public interface IBootstrapper
     {
-        (TTPData data, string csvOutputPath) ParseArguments(string[] args);
+        (TTPData data, string statisticsOutputPath, string routeOutputPath) ParseArguments(string[] args);
     }
 }
