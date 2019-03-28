@@ -20,7 +20,7 @@ namespace TTP
         {
             if (args.Length != 2)
             {
-                throw new ArgumentException($"Wrong arguments count! {Environment.NewLine}Scheme: dotnet run \"inputPath\" \"outputPath\"{Environment.NewLine}Params:{Environment.NewLine}-inputPath - .ttp file location containing data{Environment.NewLine}-outputPath - existing directory where you want to save .csv output");
+                throw new ArgumentException($"Wrong arguments count! {Environment.NewLine}Scheme: dotnet run \"inputPath\" \"outputPath\"{Environment.NewLine}Params:{Environment.NewLine}-inputPath - .ttp file location containing data{Environment.NewLine}-outputPath - existing directory where you want to save .csv output{Environment.NewLine}Example: dotnet run \"..\\ttpData\\easy_0.ttp\" \"..\\ttpData\"");
             }
             if (!Directory.Exists(args[CsvStatisticOutputFilePathArgument]))
             {

@@ -29,7 +29,6 @@ namespace TTP
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.ReadLine();
             }            
         }
 
