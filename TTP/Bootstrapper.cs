@@ -38,11 +38,11 @@ namespace TTP
             var statisticsOutputPath = $"{args[CsvStatisticOutputFilePathArgument]}\\{Path.GetFileNameWithoutExtension(args[TtpInputFilePathArgument])}_statistics.csv";
             var routeOutputPath = $"{args[CsvStatisticOutputFilePathArgument]}\\{Path.GetFileNameWithoutExtension(args[TtpInputFilePathArgument])}_route.csv";
             var ttpData = _dataLoader.LoadFromFile(args[TtpInputFilePathArgument]);
-            ttpData.GenerationNumber = 400;
-            ttpData.PopulationSize = 150;
-            ttpData.IndividualsPerTournament = 5;
-            ttpData.MutationProbability = 0.55f;
-            ttpData.CrossProbability = 0.5f;
+            ttpData.GenerationNumber = 100;
+            ttpData.PopulationSize = 100;
+            ttpData.IndividualsPerTournament = 100;
+            ttpData.MutationProbability = 0.50f;
+            ttpData.CrossProbability = 0.95f;
             return (ttpData, statisticsOutputPath, routeOutputPath);
         }
     }

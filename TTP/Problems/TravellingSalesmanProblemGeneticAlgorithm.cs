@@ -71,6 +71,10 @@ namespace TTP
                 }
             }
 
+            if (best == null)
+            {
+                return population[_randomGenerator.Next(0, population.Count)];
+            }
             return best;
         }
 
@@ -160,20 +164,6 @@ namespace TTP
         private double CalculateSpeed(double maxSpeed, double minSpeed, int currentWeight, int knapsackCapacity)
         {
             return maxSpeed - currentWeight * ((maxSpeed - minSpeed) / knapsackCapacity);
-        }
-
-        private double[,] CalculateDistances(IList<City> cities)
-        {
-            var orderedCities = cities.OrderBy(x => x.Index).ToList();
-            var distances = new double[cities.Count, cities.Count];
-            for (int i = 0; i < cities.Count; i++)
-            {
-                for (int j = 0; j < cities.Count; j++)
-                {
-                    distances[i, j] = orderedCities[i].CalculateDistance(orderedCities[j]);
-                }
-            }
-            return distances;
         }
     }
 }

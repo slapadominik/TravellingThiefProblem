@@ -2,7 +2,7 @@
   "profiles": {
     "TTP": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\ttpData\\hard_2.ttp\"  \"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\hard\" \"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\hard\""
+      "commandLineArgs": "\"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\ttpData\\hard_1.ttp\"  \"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\hard\" \"C:\\Users\\domin\\Desktop\\Studia\\Semestr VI\\Sztuczna Inteligencja\\Lab\\TTP\\hard\""
     }
   }
 }
