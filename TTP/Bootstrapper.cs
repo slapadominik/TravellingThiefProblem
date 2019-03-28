@@ -18,9 +18,9 @@ namespace TTP
 
         public (TTPData data, string statisticsOutputPath, string routeOutputPath) ParseArguments(string[] args)
         {
-            if (args.Length != 3)
+            if (args.Length != 2)
             {
-                throw new ArgumentException($"Wrong arguments count! Scheme: ttp \"inputPath\" \"outputPath\"");
+                throw new ArgumentException($"Wrong arguments count! {Environment.NewLine}Scheme: dotnet run \"inputPath\" \"outputPath\"{Environment.NewLine}Params:{Environment.NewLine}-inputPath - .ttp file location containing data{Environment.NewLine}-outputPath - existing directory where you want to save .csv output");
             }
             if (!Directory.Exists(args[CsvStatisticOutputFilePathArgument]))
             {
