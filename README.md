@@ -3,7 +3,7 @@
 Program targets .NET Core 2.2, written in C#
 
 Executing program:
-1. Proceed to root directory, where .sln is located
+1. Go to the root directory of application, where .sln is located
 2. Open command line tool
 3. dotnet build
 4. cd ttp
