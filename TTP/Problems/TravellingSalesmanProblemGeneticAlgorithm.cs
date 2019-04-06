@@ -51,8 +51,8 @@ namespace TTP
             child1.RepairRoute(parent1, parent2);
 
             var splitPoint2 = _randomGenerator.Next(0, parent1.Route.Count);
-            child2Route.AddRange(parent1.Route.GetRange(0, splitPoint2).ToList());
-            child2Route.AddRange(parent2.Route.GetRange(splitPoint2, parent2.Route.Count - splitPoint2));
+            child2Route.AddRange(parent2.Route.GetRange(0, splitPoint2).ToList());
+            child2Route.AddRange(parent1.Route.GetRange(splitPoint2, parent2.Route.Count - splitPoint2));
             TSPIndividual child2 = new TSPIndividual(child2Route);
             child2.RepairRoute(parent1, parent2);
 
@@ -76,6 +76,23 @@ namespace TTP
                 return population[_randomGenerator.Next(0, population.Count)];
             }
             return best;
+        }
+
+        public TSPIndividual SelectionRoulette(List<TSPIndividual> population)
+        {
+            population = population.OrderBy(x => x.Quality).ToList();
+            var min = Math.Abs(population.Min(x => x.Quality)) + 30;
+            var qualities = population.Select(x => x.Quality + min).OrderBy(x => x).ToList();
+            double sumOfFitness = qualities.Sum();
+            double value = _randomGenerator.NextDouble() * sumOfFitness;
+
+            for (int i = 0; i < qualities.Count; i++)
+            {
+                value -= qualities[i];
+                if (value < 0) return population[i];
+            }
+
+            return population.Last();
         }
 
         public (TSPIndividual bestIndividual, IEnumerable<TSPPopulationStatistics> statistics) ResolveProblem(TTPData initData, Knapsack knapsack)

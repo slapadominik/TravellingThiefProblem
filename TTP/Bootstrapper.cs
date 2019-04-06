@@ -40,9 +40,9 @@ namespace TTP
             var ttpData = _dataLoader.LoadFromFile(args[TtpInputFilePathArgument]);
             ttpData.GenerationNumber = 100;
             ttpData.PopulationSize = 100;
-            ttpData.IndividualsPerTournament = 100;
-            ttpData.MutationProbability = 0.50f;
-            ttpData.CrossProbability = 0.95f;
+            ttpData.IndividualsPerTournament = 50;
+            ttpData.MutationProbability = 0.5f;
+            ttpData.CrossProbability = 0.25f;
             return (ttpData, statisticsOutputPath, routeOutputPath);
         }
     }
